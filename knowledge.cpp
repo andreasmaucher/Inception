@@ -12,3 +12,12 @@ Docker Volumes: special directories on the host (if a container is deleted, the 
 -> with compose images are run and built according to .yml file
 
 */
+
+/*
+MARIA DB
+
+drop-in replacement for MySQL and used as a database for wordpress
+
+
+
+*/
