@@ -18,6 +18,17 @@ MARIA DB
 
 drop-in replacement for MySQL and used as a database for wordpress
 
+mariadb-client provides the mysql command
+
+*/
+
+/*
+COMMANDS
+
+make all
+make clean (always needs to be done after a change before redoing make all)
+
+make ps (see all services running)
 
 
 */
