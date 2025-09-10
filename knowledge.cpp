@@ -29,6 +29,4 @@ make all
 make clean (always needs to be done after a change before redoing make all)
 
 make ps (see all services running)
-
-
 */
