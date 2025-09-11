@@ -41,3 +41,12 @@ How it works:
 6. WordPress processes PHP and returns HTML
 7. Nginx sends response back to client
 */
+
+/*
+Daemons:
+- background processes that run continously
+- daemons are good in traditional systems but not in containers
+- in containers daemons make docker monitor the shell not nginx, signals don't reach daemon & docker can't capture logs
+-> "daemon off" if working in a container!
+-> in this foreground mode we have one single process, docker can track the process and shutdown gracefully
+*/

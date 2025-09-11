@@ -1,3 +1,8 @@
+# Data volumes (don't commit database and website files)
+volumes/
+
+# Secrets directory
 secrets/
-/home/amaucher/data/
+
+# Environment variables
 *.env
