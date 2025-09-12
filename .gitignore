@@ -7,5 +7,3 @@ secrets/
 
 # Environment variables
 *.env
-
-eval.cpp
