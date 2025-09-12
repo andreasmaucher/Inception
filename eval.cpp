@@ -201,5 +201,16 @@ Scalability for future enhancements
 
 //! simple setup
 /*
+Show port 443:
+
+cd /home/amaucher/inception/srcs
+docker compose rm -sf nginx
+docker compose build --no-cache nginx
+docker compose up -d nginx
+docker logs --tail=50 nginx | cat
+docker ps
+
+somehow it is gone for docker ps. why is that //!!
+
 
 */
