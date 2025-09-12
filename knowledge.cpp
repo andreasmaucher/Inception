@@ -1,3 +1,12 @@
+//! unsolved
+/*
+To simplify the process, you must configure your domain name to point to your local
+IP address.
+This domain name must be login.42.fr. Again, you must use your own login.
+For example, if your login is ’wil’, wil.42.fr will redirect to the IP address pointing to
+Wil’s website.
+*/
+
 /*
 DOCKER COMPOSE
 
