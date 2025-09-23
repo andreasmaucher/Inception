@@ -2,7 +2,6 @@
 NAME = inception
 COMPOSE_FILE = srcs/docker-compose.yml
 
-
 # Default target
 all: build up
 
@@ -44,6 +43,7 @@ logs-%:
 
 # Restart all services
 restart: down up
+
 # Show help
 help:
 	@echo "Available commands:"
