@@ -2,57 +2,51 @@
 NAME = inception
 COMPOSE_FILE = srcs/docker-compose.yml
 
-# Colors for output
-GREEN = \033[0;32m
-RED = \033[0;31m
-YELLOW = \033[0;33m
-NC = \033[0m # No Color
 
 # Default target
 all: build up
 
 # Build all Docker images
 build:
-	@echo "$(GREEN)Building Docker images...$(NC)"
+	@echo "Building Docker images..."
 	docker compose -f $(COMPOSE_FILE) build
 
 # Start all services
 up:
-	@echo "$(GREEN)Starting services...$(NC)"
+	@echo "Starting services..."
 	docker compose -f $(COMPOSE_FILE) up -d
 
 # Stop all services
 down:
-	@echo "$(YELLOW)Stopping services...$(NC)"
+	@echo "Stopping services..."
 	docker compose -f $(COMPOSE_FILE) down
 
 # Stop and remove everything (containers, images, volumes, networks)
 clean:
-	@echo "$(RED)Cleaning everything...$(NC)"
+	@echo "Cleaning everything..."
 	docker compose -f $(COMPOSE_FILE) down -v --rmi all
 	docker system prune -f
 
 # Show running containers
 ps:
-	@echo "$(GREEN)Running containers:$(NC)"
+	@echo "Running containers:"
 	docker compose -f $(COMPOSE_FILE) ps
 
 # Show logs
 logs:
-	@echo "$(GREEN)Container logs:$(NC)"
+	@echo "Container logs:"
 	docker compose -f $(COMPOSE_FILE) logs
 
 # Show logs for a specific service
 logs-%:
-	@echo "$(GREEN)Logs for $*:$(NC)"
+	@echo "Logs for $*:"
 	docker compose -f $(COMPOSE_FILE) logs $*
 
 # Restart all services
 restart: down up
-
 # Show help
 help:
-	@echo "$(GREEN)Available commands:$(NC)"
+	@echo "Available commands:"
 	@echo "  make all      - Build and start all services"
 	@echo "  make build    - Build all Docker images"
 	@echo "  make up       - Start all services"
