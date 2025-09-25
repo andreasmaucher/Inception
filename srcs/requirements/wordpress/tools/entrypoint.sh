@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# Wait for MariaDB to be ready
+# Wait for MariaDB to be ready 
+# WP starts immediately but MariaDB takes time initialize (create database, set up users)
 until mysql -h${WP_DB_HOST} -u${WP_DB_USER} -p${WP_DB_PASSWORD} -e "USE ${WP_DB_NAME}" 2>/dev/null; do
   echo "Waiting for MariaDB..."
   sleep 2
@@ -24,5 +25,5 @@ if [ ! -f /var/www/html/wp-config.php ]; then
     --skip-email
 fi
 
-# Start php-fpm in foreground
+# Start php-fpm in foreground (without exec a child process would be started)
 exec php-fpm81 --nodaemonize
