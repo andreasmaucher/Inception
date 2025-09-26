@@ -6,4 +6,4 @@ volumes/
 secrets/
 
 # Environment variables (ignore actual .env but keep example.env)
-.env
+srcs/.env

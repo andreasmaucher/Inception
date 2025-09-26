@@ -7,12 +7,12 @@ all: setup build up
 
 # Setup environment file
 setup:
-	@if [ ! -f .env ]; then \
-		echo "Creating .env file from example.env..."; \
-		cp example.env .env; \
-		echo "Please edit .env file with your configuration before running 'make build'"; \
+	@if [ ! -f srcs/.env ]; then \
+		echo "Creating srcs/.env file from example.env..."; \
+		cp example.env srcs/.env; \
+		echo "Please edit srcs/.env file with your configuration before running 'make build'"; \
 	else \
-		echo ".env file already exists"; \
+		echo "srcs/.env file already exists"; \
 	fi
 
 # Build all Docker images
