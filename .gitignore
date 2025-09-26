@@ -5,5 +5,5 @@ volumes/
 # Secrets directory
 secrets/
 
-# Environment variables
-*.env
+# Environment variables (ignore actual .env but keep example.env)
+.env

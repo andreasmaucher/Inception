@@ -3,7 +3,17 @@ NAME = inception
 COMPOSE_FILE = srcs/docker-compose.yml
 
 # Default target
-all: build up
+all: setup build up
+
+# Setup environment file
+setup:
+	@if [ ! -f .env ]; then \
+		echo "Creating .env file from example.env..."; \
+		cp example.env .env; \
+		echo "Please edit .env file with your configuration before running 'make build'"; \
+	else \
+		echo ".env file already exists"; \
+	fi
 
 # Build all Docker images
 build:
@@ -47,7 +57,8 @@ restart: down up
 # Show help
 help:
 	@echo "Available commands:"
-	@echo "  make all      - Build and start all services"
+	@echo "  make all      - Setup, build and start all services"
+	@echo "  make setup    - Create .env file from example.env"
 	@echo "  make build    - Build all Docker images"
 	@echo "  make up       - Start all services"
 	@echo "  make down     - Stop all services"
@@ -58,4 +69,4 @@ help:
 	@echo "  make restart  - Restart all services"
 	@echo "  make help     - Show this help"
 
-.PHONY: all build up down clean ps logs restart help
+.PHONY: all setup build up down clean ps logs restart help
