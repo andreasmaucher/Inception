@@ -214,3 +214,8 @@ somehow it is gone for docker ps. why is that //!!
 
 
 */
+
+/*
+su- for root access
+
+*/
