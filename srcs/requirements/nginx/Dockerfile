@@ -1,6 +1,7 @@
 FROM debian:bookworm-slim
 
-RUN apt-get update && \
+RUN mkdir -p /tmp && chmod 1777 /tmp && \
+    apt-get update && \
     apt-get install -y --no-install-recommends nginx openssl && \
     rm -rf /var/lib/apt/lists/*
 

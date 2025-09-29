@@ -2,7 +2,8 @@
 FROM debian:bookworm-slim
 
 # Update package list and install MariaDB server and client tools
-RUN apt-get update && \
+RUN mkdir -p /tmp && chmod 1777 /tmp && \
+    apt-get update && \
     apt-get install -y --no-install-recommends mariadb-server mariadb-client && \
     rm -rf /var/lib/apt/lists/*
 
