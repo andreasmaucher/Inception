@@ -20,6 +20,15 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 # Copy PHP-FPM configuration
 COPY conf/php-fpm.conf /etc/php81/php-fpm.d/www.conf
 
+# Increase PHP upload and post limits
+RUN { \
+  echo 'upload_max_filesize=64M'; \
+  echo 'post_max_size=64M'; \
+  echo 'max_execution_time=300'; \
+  echo 'max_input_time=300'; \
+  echo 'memory_limit=256M'; \
+} > /etc/php81/conf.d/uploads.ini
+
 # Copy entrypoint script
 COPY tools/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

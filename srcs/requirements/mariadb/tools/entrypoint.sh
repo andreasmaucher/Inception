@@ -1,25 +1,30 @@
 #!/bin/sh
+set -e
 
-# MariaDB was created as a fork of MySQL when Oracle acquired it. For backward compatibility reasons they kept the naming.
+# Ensure runtime directory exists and has correct ownership each start (tmpfs in containers)
+mkdir -p /run/mysqld
+chown -R mysql:mysql /run/mysqld
+chmod 775 /run/mysqld
+rm -f /run/mysqld/mysqld.sock /run/mysqld/mysqld.pid || true
 
-# Initialize database if itdoesn't exist yet
-# /var/lib/mysql/mysql is the default maria db system database
+# Initialize database if it doesn't exist yet
 if [ ! -d "/var/lib/mysql/mysql" ]; then
     echo "Initializing MariaDB database..."
-    # mysql_install_db prepares the files but doesn't start the server yet
-    mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
-    
+    mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql >/dev/null 2>&1 || \
+      mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
+
     # Start MariaDB temporarily for setup
-    # we need to run it in the background first to set up data directory, otherwise it would fail at exec
-    # --skip-networking=0 enables networking connections and allows for remote access
     mysqld_safe --datadir='/var/lib/mysql' --skip-networking=0 &
-    sleep 10
-    
+    # Wait for server to accept connections
+    for i in $(seq 1 30); do
+      if mysqladmin ping --silent; then
+        break
+      fi
+      echo "Waiting for temporary MariaDB to be ready... ($i)"
+      sleep 1
+    done
+
     # Create database and user
-    # all white keywords are environment variables from Docker
-    # basically in the docker-compose.yml file I am telling the system to use .env for each service
-    # only allow access to root user with the new password
-    # flush privileges applies changes immediately without the need for a restart of the server
     mysql -u root <<-EOSQL
         CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};
         CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
@@ -27,13 +32,11 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
         ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
         FLUSH PRIVILEGES;
 EOSQL
-    
-    # Shutdown of the temprary MariaDB instance after setup
-    mysqladmin -u root -p${MYSQL_ROOT_PASSWORD} shutdown
-    sleep 5
+
+    # Shutdown temporary instance cleanly
+    mysqladmin -u root -p"${MYSQL_ROOT_PASSWORD}" shutdown || true
+    sleep 2
 fi
 
 echo "Starting MariaDB..."
-# Start MariaDB in foreground
-# exec replaces current shell process with maria db -> now runs in foreground for Docker to monitor
 exec mysqld_safe --datadir='/var/lib/mysql' --skip-networking=0
