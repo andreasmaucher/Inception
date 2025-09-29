@@ -26,4 +26,4 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 fi
 
 # Start php-fpm in foreground (without exec a child process would be started)
-exec php-fpm81 --nodaemonize
+exec php-fpm8.2 --nodaemonize

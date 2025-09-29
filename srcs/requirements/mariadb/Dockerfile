@@ -1,11 +1,10 @@
 # Dockerfile that creates a database container
-FROM alpine:3.18
+FROM debian:bookworm-slim
 
-# updates package list
-# installs maria db server and client tools
-# --no-cache keeps image smaller by not storing package cach
-RUN apk update && \
-    apk add --no-cache mariadb mariadb-client
+# Update package list and install MariaDB server and client tools
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends mariadb-server mariadb-client && \
+    rm -rf /var/lib/apt/lists/*
 
 # Create necessary directories for MariaDB:
     # /run/mysqld to store maria db runtime files

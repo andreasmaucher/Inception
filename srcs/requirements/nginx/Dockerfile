@@ -1,7 +1,8 @@
-FROM alpine:3.18
+FROM debian:bookworm-slim
 
-RUN apk update && \
-    apk add --no-cache nginx openssl
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends nginx openssl && \
+    rm -rf /var/lib/apt/lists/*
 
 # Create necessary directories
 RUN mkdir -p /run/nginx /var/log/nginx

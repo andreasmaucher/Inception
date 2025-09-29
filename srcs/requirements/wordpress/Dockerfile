@@ -1,10 +1,23 @@
-FROM alpine:3.18
+FROM debian:bookworm-slim
 
-RUN apk update && \
-    apk add --no-cache php81 php81-fpm php81-mysqli php81-json php81-curl php81-mbstring php81-xml php81-gd php81-session php81-dom php81-opcache php81-zip php81-phar wget curl mariadb-client
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      ca-certificates \
+      curl \
+      wget \
+      mariadb-client \
+      php8.2 \
+      php8.2-fpm \
+      php8.2-mysql \
+      php8.2-curl \
+      php8.2-mbstring \
+      php8.2-xml \
+      php8.2-gd \
+      php8.2-zip \
+      php8.2-opcache && \
+    rm -rf /var/lib/apt/lists/*
 
-# Create user for php-fpm (group www-data already exists)
-RUN adduser -u 82 -D -S -G www-data www-data
+# Debian already provides www-data user and group
 
 # Download WordPress
 WORKDIR /var/www/html
@@ -17,17 +30,17 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
     chmod +x wp-cli.phar && \
     mv wp-cli.phar /usr/local/bin/wp
 
-# Copy PHP-FPM configuration
-COPY conf/php-fpm.conf /etc/php81/php-fpm.d/www.conf
+# Copy PHP-FPM pool configuration (Debian path)
+COPY conf/php-fpm.conf /etc/php/8.2/fpm/pool.d/www.conf
 
-# Increase PHP upload and post limits
+# Increase PHP upload and post limits (FPM)
 RUN { \
   echo 'upload_max_filesize=64M'; \
   echo 'post_max_size=64M'; \
   echo 'max_execution_time=300'; \
   echo 'max_input_time=300'; \
   echo 'memory_limit=256M'; \
-} > /etc/php81/conf.d/uploads.ini
+} > /etc/php/8.2/fpm/conf.d/uploads.ini
 
 # Copy entrypoint script
 COPY tools/entrypoint.sh /entrypoint.sh
