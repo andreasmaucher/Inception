@@ -28,7 +28,7 @@ services:
     depends_on:
       - wordpress
     ports:
-      - "8443:443" # sole entry point into the infrastructure (only external access point)
+      - '443:443' # sole entry point into the infrastructure (only external access point)
     volumes:
       - wordpress_data:/var/www/html:ro
     networks:
