@@ -40,13 +40,13 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/amaucher/data/mariadb
+      device: /home/andreas/data/mariadb
       o: bind
   wordpress_data:
     driver: local
     driver_opts:
       type: none
-      device: /home/amaucher/data/wordpress
+      device: /home/andreas/data/wordpress
       o: bind
 
 # docker network that establishes the connection between containers

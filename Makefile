@@ -3,7 +3,7 @@ NAME = inception
 COMPOSE_FILE = srcs/docker-compose.yml
 
 # Default target
-all: setup build up
+all: setup setup-dirs build up
 
 # Setup environment file
 setup:
@@ -15,41 +15,59 @@ setup:
 		echo "srcs/.env file already exists"; \
 	fi
 
+# Create data directories if they don't exist
+setup-dirs:
+	@echo "Setting up data directories..."
+	@if [ ! -d /home/andreas/data/mariadb ]; then \
+		echo "Creating /home/andreas/data/mariadb..."; \
+		mkdir -p /home/andreas/data/mariadb; \
+		chown -R 999:999 /home/andreas/data/mariadb; \
+	else \
+		echo "/home/andreas/data/mariadb already exists"; \
+	fi
+	@if [ ! -d /home/andreas/data/wordpress ]; then \
+		echo "Creating /home/andreas/data/wordpress..."; \
+		mkdir -p /home/andreas/data/wordpress; \
+		chown -R 82:82 /home/andreas/data/wordpress; \
+	else \
+		echo "/home/andreas/data/wordpress already exists"; \
+	fi
+
 # Build all Docker images
 build:
 	@echo "Building Docker images..."
-	docker compose -f $(COMPOSE_FILE) build
+	docker-compose -f $(COMPOSE_FILE) build
 
 # Start all services
 up:
 	@echo "Starting services..."
-	docker compose -f $(COMPOSE_FILE) up -d
+	docker-compose -f $(COMPOSE_FILE) up -d
 
 # Stop all services
 down:
 	@echo "Stopping services..."
-	docker compose -f $(COMPOSE_FILE) down
+	docker-compose -f $(COMPOSE_FILE) down
 
 # Stop and remove everything (containers, images, volumes, networks)
 clean:
 	@echo "Cleaning everything..."
-	docker compose -f $(COMPOSE_FILE) down -v --rmi all
+	docker-compose -f $(COMPOSE_FILE) down -v --rmi all
 	docker system prune -f
 
 # Show running containers
 ps:
 	@echo "Running containers:"
-	docker compose -f $(COMPOSE_FILE) ps
+	docker-compose -f $(COMPOSE_FILE) ps
 
 # Show logs
 logs:
 	@echo "Container logs:"
-	docker compose -f $(COMPOSE_FILE) logs
+	docker-compose -f $(COMPOSE_FILE) logs
 
 # Show logs for a specific service
 logs-%:
 	@echo "Logs for $*:"
-	docker compose -f $(COMPOSE_FILE) logs $*
+	docker-compose -f $(COMPOSE_FILE) logs $*
 
 # Restart all services
 restart: down up
@@ -59,6 +77,7 @@ help:
 	@echo "Available commands:"
 	@echo "  make all      - Setup, build and start all services"
 	@echo "  make setup    - Create .env file from example.env"
+	@echo "  make setup-dirs - Create data directories if they don't exist"
 	@echo "  make build    - Build all Docker images"
 	@echo "  make up       - Start all services"
 	@echo "  make down     - Stop all services"
@@ -69,4 +88,4 @@ help:
 	@echo "  make restart  - Restart all services"
 	@echo "  make help     - Show this help"
 
-.PHONY: all setup build up down clean ps logs restart help
+.PHONY: all setup setup-dirs build up down clean ps logs restart help

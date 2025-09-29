@@ -1,6 +1,7 @@
 # Data volumes (don't commit database and website files)
 volumes/
 /home/amaucher/data/
+/home/andreas/data/
 
 # Secrets directory
 secrets/
