@@ -12,6 +12,7 @@ services:
 
   wordpress:
     build: ./requirements/wordpress
+    image: wordpress
     container_name: wordpress
     env_file: ../.env
     depends_on:
@@ -24,6 +25,7 @@ services:
 
   nginx:
     build: ./requirements/nginx
+    image: nginx
     container_name: nginx
     env_file: ../.env
     depends_on:
