@@ -1,5 +1,5 @@
 # Dockerfile that creates a database container
-FROM debian:bookworm-slim
+FROM debian:12.12
 
 # Update package list and install MariaDB server and client tools
 RUN mkdir -p /tmp && chmod 1777 /tmp && \

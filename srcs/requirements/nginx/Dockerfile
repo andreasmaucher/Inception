@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:12.12
 
 RUN mkdir -p /tmp && chmod 1777 /tmp && \
     apt-get update && \
