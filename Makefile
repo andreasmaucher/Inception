@@ -18,56 +18,56 @@ setup:
 # Create data directories if they don't exist
 setup-dirs:
 	@echo "Setting up data directories..."
-	@if [ ! -d /home/amaucher/data/mariadb ]; then \
-		echo "Creating /home/amaucher/data/mariadb..."; \
-		mkdir -p /home/amaucher/data/mariadb; \
-		chown -R 999:999 /home/amaucher/data/mariadb; \
+	@if [ ! -d /home/andreas/data/mariadb ]; then \
+		echo "Creating /home/andreas/data/mariadb..."; \
+		mkdir -p /home/andreas/data/mariadb; \
+		chown -R 999:999 /home/andreas/data/mariadb; \
 	else \
-		echo "/home/amaucher/data/mariadb already exists"; \
+		echo "/home/andreas/data/mariadb already exists"; \
 	fi
-	@if [ ! -d /home/amaucher/data/wordpress ]; then \
-		echo "Creating /home/amaucher/data/wordpress..."; \
-		mkdir -p /home/amaucher/data/wordpress; \
-		chown -R 82:82 /home/amaucher/data/wordpress; \
+	@if [ ! -d /home/andreas/data/wordpress ]; then \
+		echo "Creating /home/andreas/data/wordpress..."; \
+		mkdir -p /home/andreas/data/wordpress; \
+		chown -R 82:82 /home/andreas/data/wordpress; \
 	else \
-		echo "/home/amaucher/data/wordpress already exists"; \
+		echo "/home/andreas/data/wordpress already exists"; \
 	fi
 
 # Build all Docker images
 build:
 	@echo "Building Docker images..."
-	docker compose -f $(COMPOSE_FILE) build
+	docker-compose -f $(COMPOSE_FILE) build --parallel
 
 # Start all services
 up:
 	@echo "Starting services..."
-	docker compose -f $(COMPOSE_FILE) up -d
+	docker-compose -f $(COMPOSE_FILE) up -d
 
 # Stop all services
 down:
 	@echo "Stopping services..."
-	docker compose -f $(COMPOSE_FILE) down
+	docker-compose -f $(COMPOSE_FILE) down
 
 # Stop and remove everything (containers, images, volumes, networks)
 clean:
 	@echo "Cleaning everything..."
-	docker compose -f $(COMPOSE_FILE) down -v --rmi all
+	docker-compose -f $(COMPOSE_FILE) down -v --rmi all
 	docker system prune -f
 
 # Show running containers
 ps:
 	@echo "Running containers:"
-	docker compose -f $(COMPOSE_FILE) ps
+	docker-compose -f $(COMPOSE_FILE) ps
 
 # Show logs
 logs:
 	@echo "Container logs:"
-	docker compose -f $(COMPOSE_FILE) logs
+	docker-compose -f $(COMPOSE_FILE) logs
 
 # Show logs for a specific service
 logs-%:
 	@echo "Logs for $*:"
-	docker compose -f $(COMPOSE_FILE) logs $*
+	docker-compose -f $(COMPOSE_FILE) logs $*
 
 # Restart all services
 restart: down up

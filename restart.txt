@@ -19,13 +19,7 @@ docker system info | grep -i 'Docker Root Dir'
 Purge all Docker state and caches (safe if you don’t need other local images)
 
 # Remove any leftover content in the old small root (ignore errors if absent)
-rm -rf ~/.local/share/docker/* 2>/dev/null || true
-
-docker builder prune -af
-docker buildx prune -af
-docker system prune -af --volumes
-docker volume prune -f
-docker network prune -f
+ses this 
 ------------
 make all again
 ------------
