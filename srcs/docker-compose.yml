@@ -3,7 +3,7 @@ services:
     build: ./requirements/mariadb
     image: mariadb
     container_name: mariadb
-    env_file: ../.env
+    env_file: .env
     volumes:
       - mariadb_data:/var/lib/mysql
     networks:
@@ -14,7 +14,7 @@ services:
     build: ./requirements/wordpress
     image: wordpress
     container_name: wordpress
-    env_file: ../.env
+    env_file: .env
     depends_on:
       - mariadb
     volumes:
@@ -27,11 +27,11 @@ services:
     build: ./requirements/nginx
     image: nginx
     container_name: nginx
-    env_file: ../.env
+    env_file: .env
     depends_on:
       - wordpress
     ports:
-      - '8443:443' # sole entry point into the infrastructure (only external access point)
+      - '443:443' # sole entry point into the infrastructure (only external access point)
     volumes:
       - wordpress_data:/var/www/html:ro
     networks:
@@ -43,16 +43,18 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/amaucher/data/mariadb
+      device: /home/andreas/data/mariadb
       o: bind
   wordpress_data:
     driver: local
     driver_opts:
       type: none
-      device: /home/amaucher/data/wordpress
+      device: /home/andreas/data/wordpress
       o: bind
 
 # docker network that establishes the connection between containers
+# bridge driver is the default for single-host networks
+# custom network let's containers communitcate by name instead of IP addresses (names are always the same, IPs change with restart)
 networks:
   inception:
     driver: bridge

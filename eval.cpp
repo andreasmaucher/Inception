@@ -219,3 +219,8 @@ somehow it is gone for docker ps. why is that //!!
 su- for root access
 
 */
+
+/*
+Bind mount = Directly connecting a host directory to a container directory.
+
+*/
