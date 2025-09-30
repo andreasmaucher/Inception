@@ -3,8 +3,5 @@ volumes/
 /home/amaucher/data/
 /home/andreas/data/
 
-# Secrets directory
-secrets/
-
 # Environment variables (ignore actual .env but keep example.env)
 srcs/.env
