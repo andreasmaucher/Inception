@@ -28,3 +28,6 @@ docker volume prune -f
 docker network prune -f
 ------------
 make all again
+------------
+Check if all services are ready:
+docker compose -f srcs/docker-compose.yml logs -f mariadb
