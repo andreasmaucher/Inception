@@ -36,7 +36,7 @@ setup-dirs:
 # Build all Docker images
 build:
 	@echo "Building Docker images..."
-	docker-compose -f $(COMPOSE_FILE) build --parallel
+	docker-compose -f $(COMPOSE_FILE) build
 
 # Start all services
 up:
@@ -69,6 +69,11 @@ logs-%:
 	@echo "Logs for $*:"
 	docker-compose -f $(COMPOSE_FILE) logs $*
 
+# Show WordPress users (ID and login) from MariaDB
+showusers:
+	@echo "WordPress users (first 5):"
+	docker-compose -f $(COMPOSE_FILE) exec -T mariadb sh -lc 'mysql -u root -p"$$MYSQL_ROOT_PASSWORD" -D "$$MYSQL_DATABASE" -e "SELECT ID,user_login FROM wp_users LIMIT 5;"'
+
 # Restart all services
 restart: down up
 
@@ -87,5 +92,6 @@ help:
 	@echo "  make logs-*   - Show logs for specific service (e.g., make logs-nginx)"
 	@echo "  make restart  - Restart all services"
 	@echo "  make help     - Show this help"
+	@echo "  make showusers- Show first 5 WP users from MariaDB"
 
-.PHONY: all setup setup-dirs build up down clean ps logs restart help
+.PHONY: all setup setup-dirs build up down clean ps logs restart help showusers

@@ -1,23 +1,17 @@
 #!/bin/sh
 set -e
 
-# Ensure runtime directory exists and has correct ownership each start (tmpfs in containers)
+# Ensure runtime directory exists and has correct ownership
 mkdir -p /run/mysqld
 chown -R mysql:mysql /run/mysqld
 chmod 775 /run/mysqld
 rm -f /run/mysqld/mysqld.sock /run/mysqld/mysqld.pid || true
-
-### Debug info
-echo "[mariadb-entrypoint] starting entrypoint"
-echo "[mariadb-entrypoint] MYSQL_DATABASE=${MYSQL_DATABASE:-<unset>} MYSQL_USER=${MYSQL_USER:-<unset>}"
 
 # Initialize database if it doesn't exist yet
 if [ ! -d "/var/lib/mysql/mysql" ]; then
     echo "[mariadb-entrypoint] Initializing MariaDB database..."
     mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql >/var/log/mariadb-init.log 2>&1 || \
       mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql >/var/log/mariadb-init.log 2>&1
-    echo "[mariadb-entrypoint] initialization log (tail):"
-    tail -n +1 /var/log/mariadb-init.log || true
 
     # Start MariaDB temporarily for setup (fresh DB)
     mysqld_safe --datadir='/var/lib/mysql' --bind-address=0.0.0.0 &
@@ -57,4 +51,5 @@ else
 fi
 
 echo "[mariadb-entrypoint] Starting MariaDB..."
+# --bind-address= listen on all interfaces, so the other containers can connect
 exec mysqld_safe --datadir='/var/lib/mysql' --bind-address=0.0.0.0
