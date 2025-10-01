@@ -7,14 +7,20 @@ RUN mkdir -p /tmp && chmod 1777 /tmp && \
       curl \
       wget \
       mariadb-client \
+      # php meta package
       php8.2 \
+      # PHP-FPM required to run WP with Nginx
       php8.2-fpm \
+      # MySQL extension for PHP to connect to MariaDB
       php8.2-mysql \
       php8.2-curl \
+      # required by WP
       php8.2-mbstring \
       php8.2-xml \
+      # image manipulation
       php8.2-gd \
       php8.2-zip \
+      # for performance
       php8.2-opcache && \
     rm -rf /var/lib/apt/lists/*
 
@@ -29,17 +35,8 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
     chmod +x wp-cli.phar && \
     mv wp-cli.phar /usr/local/bin/wp
 
-# Copy PHP-FPM pool configuration (Debian path)
-COPY conf/php-fpm.conf /etc/php/8.2/fpm/pool.d/www.conf
-
-# Increase PHP upload and post limits (FPM)
-RUN { \
-  echo 'upload_max_filesize=64M'; \
-  echo 'post_max_size=64M'; \
-  echo 'max_execution_time=300'; \
-  echo 'max_input_time=300'; \
-  echo 'memory_limit=256M'; \
-} > /etc/php/8.2/fpm/conf.d/uploads.ini
+# Uses Debian default PHP-FPM pool config and switch to TCP 9000 to match Nginx
+RUN sed -i 's|^listen = .*|listen = 0.0.0.0:9000|' /etc/php/8.2/fpm/pool.d/www.conf
 
 # Copy entrypoint script
 COPY tools/entrypoint.sh /entrypoint.sh
