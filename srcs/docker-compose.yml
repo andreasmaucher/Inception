@@ -31,7 +31,7 @@ services:
     depends_on:
       - wordpress
     ports:
-      - '8443:443' # sole entry point into the infrastructure (only external access point)
+      - '443:443' # sole entry point into the infrastructure (only external access point)
     volumes:
       - wordpress_data:/var/www/html:ro
     networks:
@@ -43,13 +43,13 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/amaucher/data/mariadb
+      device: /home/andreas/data/mariadb
       o: bind
   wordpress_data:
     driver: local
     driver_opts:
       type: none
-      device: /home/amaucher/data/wordpress
+      device: /home/andreas/data/wordpress
       o: bind
 
 # docker network that establishes the connection between containers

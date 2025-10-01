@@ -18,8 +18,6 @@ RUN mkdir -p /tmp && chmod 1777 /tmp && \
       php8.2-opcache && \
     rm -rf /var/lib/apt/lists/*
 
-# Debian already provides www-data user and group
-
 # Download WordPress
 WORKDIR /var/www/html
 RUN wget https://wordpress.org/latest.tar.gz && \
