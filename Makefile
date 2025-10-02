@@ -74,6 +74,30 @@ showusers:
 	@echo "WordPress users (first 5):"
 	docker-compose -f $(COMPOSE_FILE) exec -T mariadb sh -lc 'mysql -u root -p"$$MYSQL_ROOT_PASSWORD" -D "$$MYSQL_DATABASE" -e "SELECT ID,user_login FROM wp_users LIMIT 5;"'
 
+# Show comprehensive DB info (databases, table counts, sizes, sample rows)
+showdbinfo:
+	@echo "=== Databases ==="
+	docker-compose -f $(COMPOSE_FILE) exec -T mariadb sh -lc 'mysql -u root -p"$$MYSQL_ROOT_PASSWORD" -e "SHOW DATABASES;"'
+	@echo
+	@echo "=== WordPress table count ==="
+	docker-compose -f $(COMPOSE_FILE) exec -T mariadb sh -lc 'mysql -u root -p"$$MYSQL_ROOT_PASSWORD" -e "SELECT COUNT(*) AS num_tables FROM information_schema.tables WHERE table_schema=\"$$MYSQL_DATABASE\" AND table_type=\"BASE TABLE\";"'
+	@echo
+	@echo "=== Largest tables (MB) in $$MYSQL_DATABASE ==="
+	docker-compose -f $(COMPOSE_FILE) exec -T mariadb sh -lc 'mysql -u root -p"$$MYSQL_ROOT_PASSWORD" -e "SELECT table_name, ROUND((data_length+index_length)/1024/1024,2) AS size_mb FROM information_schema.tables WHERE table_schema=\"$$MYSQL_DATABASE\" ORDER BY size_mb DESC LIMIT 10;"'
+	@echo
+	@echo "=== Row counts (wp_users, wp_posts, wp_comments) ==="
+	docker-compose -f $(COMPOSE_FILE) exec -T mariadb sh -lc 'mysql -u root -p"$$MYSQL_ROOT_PASSWORD" -D "$$MYSQL_DATABASE" -e "SELECT 'wp_users' AS table_name, COUNT(*) AS rows_count FROM wp_users;" 2>/dev/null || true'
+	docker-compose -f $(COMPOSE_FILE) exec -T mariadb sh -lc 'mysql -u root -p"$$MYSQL_ROOT_PASSWORD" -D "$$MYSQL_DATABASE" -e "SELECT 'wp_posts' AS table_name, COUNT(*) AS rows_count FROM wp_posts;" 2>/dev/null || true'
+	docker-compose -f $(COMPOSE_FILE) exec -T mariadb sh -lc 'mysql -u root -p"$$MYSQL_ROOT_PASSWORD" -D "$$MYSQL_DATABASE" -e "SELECT 'wp_comments' AS table_name, COUNT(*) AS rows_count FROM wp_comments;" 2>/dev/null || true'
+	@echo
+	@echo "=== Sample rows ==="
+	@echo "- wp_users:"
+	docker-compose -f $(COMPOSE_FILE) exec -T mariadb sh -lc 'mysql -u root -p"$$MYSQL_ROOT_PASSWORD" -D "$$MYSQL_DATABASE" -e "SELECT ID,user_login,user_email FROM wp_users LIMIT 5;"' 2>/dev/null || true
+	@echo "- wp_posts:"
+	docker-compose -f $(COMPOSE_FILE) exec -T mariadb sh -lc 'mysql -u root -p"$$MYSQL_ROOT_PASSWORD" -D "$$MYSQL_DATABASE" -e "SELECT ID,post_title,post_status FROM wp_posts ORDER BY ID DESC LIMIT 5;"' 2>/dev/null || true
+	@echo "- wp_comments:"
+	docker-compose -f $(COMPOSE_FILE) exec -T mariadb sh -lc 'mysql -u root -p"$$MYSQL_ROOT_PASSWORD" -D "$$MYSQL_DATABASE" -e "SELECT comment_ID,comment_post_ID,user_id FROM wp_comments ORDER BY comment_ID DESC LIMIT 5;"' 2>/dev/null || true
+
 # Restart all services
 restart: down up
 
@@ -93,5 +117,6 @@ help:
 	@echo "  make restart  - Restart all services"
 	@echo "  make help     - Show this help"
 	@echo "  make showusers- Show first 5 WP users from MariaDB"
+	@echo "  make showdbinfo- Show DB overview, table counts, sizes, sample rows"
 
-.PHONY: all setup setup-dirs build up down clean ps logs restart help showusers
+.PHONY: all setup setup-dirs build up down clean ps logs restart help showusers showdbinfo
